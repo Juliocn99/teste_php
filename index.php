@@ -1,5 +1,5 @@
 <?php
-// ini_set('display_errors', E_ALL);
+ini_set('display_errors', E_ALL);
 
 session_start();
 
@@ -14,7 +14,7 @@ $products = [
     4 => ['name' => 'Livro PHP Avançado', 'price' => 89.90]
 ];
 
-if (isset($_GET['action']) && $_GET['action'] == 'add' && isset($_GET['id'])) {
+if (isset($_GET['action']) && $_GET['action'] == 'add' && isset($_GET['action'])) {
     $id = (int)$_GET['id'];
 
     if (array_key_exists($id, $products)) {
@@ -40,7 +40,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'remove' && isset($_GET['id']))
 
 $total = 0;
 foreach ($_SESSION['cart'] as $item) {
-    $total += $item['preco'] * $item['quantity'];
+    $total += $item['price'] * $item['quantity'];
 }
 ?>
 <!DOCTYPE html>
