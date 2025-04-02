@@ -14,29 +14,34 @@ $products = [
     4 => ['name' => 'Livro PHP Avançado', 'price' => 89.90]
 ];
 
-if (isset($_GET['action']) && $_GET['action'] == 'add' && isset($_GET['id'])) {
-    $id = (int)$_GET['id'];
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
+    // Adicionar ao carrinho    
+    if (isset($_POST['action']) && $_POST['action'] == 'add' && isset($_POST['id'])) {
+        $id = (int)$_POST['id'];
 
-    if (array_key_exists($id, $products)) {
-        if (isset($_SESSION['cart'][$id])) {
-            $_SESSION['cart'][$id]['quantity']++;
-        } else {
-            $_SESSION['cart'][$id] = [
-                'name' => $products[$id]['name'],
-                'price' => $products[$id]['price'],
-                'quantity' => 1
-            ];
+        if (array_key_exists($id, $products)) {
+            if (isset($_SESSION['cart'][$id])) {
+                $_SESSION['cart'][$id]['quantity']++;
+            } else {
+                $_SESSION['cart'][$id] = [
+                    'name' => $products[$id]['name'],
+                    'price' => $products[$id]['price'],
+                    'quantity' => 1 
+                ];
+            }
         }
+        header("Location: {$_SERVER['PHP_SELF']}");
+        exit;
     }
-    header("Location: {$_SERVER['PHP_SELF']}");
-    exit;
-}
-
-if (isset($_GET['action']) && $_GET['action'] == 'remove' && isset($_GET['id'])) {
-    $id = (int)$_GET['id'];
-    
-    if (isset($_SESSION['cart'][$id])) {
-        unset($_SESSION['cart'][$id]);
+    // Remover item do carrinho
+    if (isset($_POST['action']) && $_POST['action'] == 'remove' && isset($_POST['id'])) {
+        $id = (int)$_POST['id'];
+        
+        if (isset($_SESSION['cart'][$id])) {
+            unset($_SESSION['cart'][$id]);
+        }
+        header("Location: {$_SERVER['PHP_SELF']}");
+        exit;
     }
 }
 
@@ -67,9 +72,13 @@ foreach ($_SESSION['cart'] as $item) {
                         <div class="bg-white p-4 rounded-lg shadow">
                             <h3 class="font-bold text-lg"><?= $product['name'] ?></h3>
                             <p class="text-gray-600 mb-2">R$ <?= number_format($product['price'], 2, ',', '.') ?></p>
-                            <a href="?action=add&id=<?= $id ?>" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded inline-block">
-                                Adicionar ao Carrinho
-                            </a>
+                            <form method="POST" action ="">
+                                <input type="hidden" name="action" value="add">
+                                <input type="hidden" name="id" value="<?= $id ?>">
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded inline-block">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </form>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -91,11 +100,15 @@ foreach ($_SESSION['cart'] as $item) {
                                 </div>
                                 <div class="flex items-center">
                                     <span class="mr-4">R$ <?= number_format($item['price'] * $item['quantity'], 2, ',', '.') ?></span>
-                                    <a href="?action=remove&id=<?= $id ?>" class="text-red-500 hover:text-red-700">
+                                    <form method="POST" action="">
+                                        <input type="hidden" name="action" value="remove">
+                                        <input type="hidden" name="id" value="<?= $id ?>">
+                                        <button type="submit" class="text-red-500 hover:text-red-700">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                         </svg>
-                                    </a>
+                                        </button>
+                                    </form>
                                 </div>
                             </li>
                         <?php endforeach; ?>
@@ -107,7 +120,6 @@ foreach ($_SESSION['cart'] as $item) {
                             <span>R$ <?= number_format($total, 2, ',', '.') ?></span>
                         </div>
                     </div>
-                    
                     <button class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mt-4">
                         Finalizar Compra
                     </button>
