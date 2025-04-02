@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', E_ALL);
+ini_set('display_errors', 0);
 
 session_start();
 
@@ -28,6 +28,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'add' && isset($_GET['id'])) {
             ];
         }
     }
+    header("Location: {$_SERVER['PHP_SELF']}");
+    exit;
 }
 
 if (isset($_GET['action']) && $_GET['action'] == 'remove' && isset($_GET['id'])) {
