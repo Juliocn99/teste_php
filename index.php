@@ -14,7 +14,7 @@ $products = [
     4 => ['name' => 'Livro PHP Avançado', 'price' => 89.90]
 ];
 
-if (isset($_GET['action']) && $_GET['action'] == 'add' && isset($_GET['action'])) {
+if (isset($_GET['action']) && $_GET['action'] == 'add' && isset($_GET['id'])) {
     $id = (int)$_GET['id'];
 
     if (array_key_exists($id, $products)) {
@@ -84,7 +84,7 @@ foreach ($_SESSION['cart'] as $item) {
                         <?php foreach ($_SESSION['cart'] as $id => $item): ?>
                             <li class="py-3 flex justify-between">
                                 <div>
-                                    <span class="font-medium"><?= $item['nome'] ?></span>
+                                    <span class="font-medium"><?= $item['name'] ?></span>
                                     <span class="text-gray-500 text-sm">x<?= $item['quantity'] ?></span>
                                 </div>
                                 <div class="flex items-center">
